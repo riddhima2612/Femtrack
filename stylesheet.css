@@ -1,0 +1,345 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppons', sans-serif;
+}
+.header{
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(51, 64, 139, 0.7), rgba(218, 203, 203, 0.7)), url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQQ8O7XgOoh-XWVDju7AcnS3djeAmSURqDwQ&s");
+
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+.header1{
+    min-height: 100vh;
+    width: 100%;
+    background-color: #222;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+body{
+    background-color: #e6ecf1;
+    
+}
+
+.text-box h1{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    padding: 2% 6%;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+nav img {
+    width: 150px;
+}
+.nav-links {
+    flex: 1;
+    text-align: right;
+}
+.nav-links ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 8px 12px;
+    position: relative;
+}
+.nav-links ul li a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+}
+.nav-links ul li::after{
+    content: '' ;
+    width: 0%;
+    height: 2px;
+    background: #5863fd;
+    display: block;
+    margin: auto;
+    transition: 0.5s;
+}
+.nav-links ul li:hover::after{
+    width: 100%;
+}
+.text-box{
+    width: 90%;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+.text-box h1{
+    font-size: 62px;
+}
+.hero-btn{
+    display: inline-block;
+    text-decoration: none;
+    color: #000000;
+    border: 1px solid #fff;
+    padding: 12px 34px;
+    font-size: 13px;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+}
+.hero-btn:hover{
+    border: 1px solid #fd5353;
+    background: #fd5353;
+    transition: 1s;
+}
+
+nav .fa{
+    display: none;
+
+}
+
+
+@media(max-width: 700px){
+    .text-box h1{
+        font-size: 62px;
+    }
+    .nav-links ul li{
+        display: block;
+    }
+    .nav-links{
+        position: absolute;
+        background: #fd5e53;
+        height: 100vh;
+        width: 200px;
+        top: 0;
+        right: -200;
+        text-align: left;
+        z-index: 2;
+        transition: 1s;
+    }
+    nav .fa{
+        display: block;
+        color: #fff;
+        margin: 10px;
+        font-size: 22px;
+        cursor: pointer;
+    }
+    .nav-links ul{
+        padding: 30px;
+    }
+}
+.h{
+    width: 80%;
+    height: 7px;
+    border: 0 none;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    background-color: rgb(10, 3, 51);
+    }
+
+.services {
+        width: 100%; /* Ensure the container spans the entire width of its parent */
+        margin: auto;
+        text-align: center;
+        padding-top: 100px;
+        background-image: linear-gradient(rgba(93, 92, 104, 0.7), rgba(61, 63, 65, 0.7)), url('https://www.searchenginejournal.com/wp-content/uploads/2021/06/law-firm-2-62fe1b3dd3871-sej.png');
+        background-position: center;
+        background-size: 100% auto; /* Adjust background size to cover entire width */
+        background-repeat: no-repeat; /* Prevent repeating the background image */
+    }
+    
+h1{
+    font-size: 36px;
+    font-weight: 600;
+    color: rgb(255, 253, 253);
+    text-decoration: underline;
+}
+p{
+    color: #504f4f;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 22px;
+    padding: 10px;
+}
+
+.row {
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.services-col {
+    flex-basis: calc(31% - 20px); /* Adjusting for margin */
+    background: #e2e5e9;
+    border-radius: 10px;
+    margin-bottom: 5%; /* Space between each column */
+    margin-right: 10px; /* Space between columns */
+    margin-left: 10px; /* Space between columns */
+    padding: 20px 12px;
+    box-sizing: border-box;
+    opacity: 0; /* Initially hide the boxes */
+}
+
+.services-col:nth-child(1) {
+    animation: slide-in 0.5s ease forwards 0.2s; /* Apply animation with delay for the first box */
+}
+
+.services-col:nth-child(2) {
+    animation: slide-in 0.5s ease forwards 0.4s; /* Apply animation with delay for the second box */
+}
+
+.services-col:nth-child(3) {
+    animation: slide-in 0.5s ease forwards 0.6s; /* Apply animation with delay for the third box */
+}
+
+.services-col:nth-child(4) {
+    animation: slide-in 0.5s ease forwards 0.8s; /* Apply animation with delay for the fourth box */
+}
+
+.services-col:nth-child(5) {
+    animation: slide-in 0.5s ease forwards 1s; /* Apply animation with delay for the fifth box */
+}
+
+.services-col:nth-child(6) {
+    animation: slide-in 0.5s ease forwards 1.2s; /* Apply animation with delay for the sixth box */
+}
+
+@keyframes slide-in {
+    0% {
+        opacity: 0; /* Start with opacity 0 */
+        transform: translateY(50px); /* Start with translateY to make it appear below */
+    }
+    100% {
+        opacity: 1; /* End with opacity 1 */
+        transform: translateY(0); /* End with translateY 0 to make it appear */
+    }
+}
+
+.services-col:hover {
+    box-shadow: 0 0 20px 0px rgba(10, 0, 0, 0.2);
+    transform: translateX(10px); 
+}
+
+
+h3 {
+    text-align: center;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+@media(max-width: 700px){
+    .row{
+        flex-direction: column;
+    }
+}
+
+/* Add your existing CSS styles here */
+
+/* Testimonials section */
+.testimonials {
+    width: 80%;
+    margin: auto;
+    padding-top: 100px;
+    text-align: center;
+}
+
+.testimonial-col {
+    flex-basis: 31%;
+    background: #c7cdd4;
+    border-radius: 10px;
+    margin-bottom: 5%;
+    padding: 20px 12px;
+    box-sizing: border-box;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.testimonial-col:hover {
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+.testimonial-col p {
+    color: #777;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 22px;
+    padding: 10px;
+    margin: 0;
+}
+
+.testimonial-col h3 {
+    text-align: center;
+    font-weight: 600;
+    margin: 10px 0;
+    color: #222; /* Change color to make it more visible */
+}
+.testimonials h1{
+    color: #000408;
+}
+
+/* Responsive styles */
+@media (max-width: 700px) {
+    .testimonial-col {
+        flex-basis: 100%; /* Change to full width on smaller screens */
+    }
+}
+
+
+
+/*---call to action---*/
+.cta{
+    margin: 100px auto;
+    width: 80%;
+    background-image: linear-gradient(rgba(21, 14, 90, 0.7),rgba(0,0,0,0.7)),url('https://media.istockphoto.com/id/1139699594/photo/law-concept-themis-statue-judge-hammer-and-books.jpg?s=612x612&w=0&k=20&c=VgFftTqxcgJswpCK8IQS9bpCo9aDJ_Vsgigwa0bnH-c=');
+    background-position: center;
+    background-size: cover;
+    border-radius: 10px;
+    text-align: center;
+    padding: 100px 0;
+}
+
+.cta h1{
+    color:#fff;
+    margin-bottom: 40px;
+    padding: 0;
+    text-decoration: none;
+
+}
+@media(max-width: 700px){
+    .cta h1{
+        font-size: 24px;
+    }
+}
+
+/*---footer---*/
+.footer {
+    width: 100%;
+    height: 100vh; /* Make the footer cover the entire viewport height */
+    text-align: center;
+    padding: 30px 0;
+    background-image: linear-gradient(rgba(163, 161, 180, 0.7), rgba(236, 227, 227, 0.7)), url('https://www.forbes.com/advisor/wp-content/uploads/2022/09/Image_-_Law_Firm_Website_.jpeg.jpg');
+    background-position: center;
+    background-size: cover;
+    color: #000408;
+}
+
+.footer p{
+    color: #030000;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    font-weight: 300;
+}
+.footer b{
+    color: #00050a;
+    font-weight: bolder;
+}
+.footer h1{
+    text-decoration: underline;
+    color: #000408;
+} 
+

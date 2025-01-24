@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menstrual Cycle Tracker</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Custom CSS styles */
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .card-header {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .card-body {
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-5">Menstrual Cycle Tracker</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Track Period</div>
+          <div class="card-body">
+            <form id="periodForm">
+              <div class="form-group">
+                <label for="lastPeriodDate">Date of Last Period:</label>
+                <input type="date" class="form-control" id="lastPeriodDate" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Predict Next Period</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Next Period Prediction</div>
+          <div class="card-body">
+            <div id="nextPeriodPrediction"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript code for handling form submission and predicting next period date
+    document.getElementById('periodForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const lastPeriodDate = new Date(document.getElementById('lastPeriodDate').value);
+      const nextPeriodDate = predictNextPeriod(lastPeriodDate);
+      displayNextPeriodPrediction(nextPeriodDate);
+      checkDoctorConsultation(lastPeriodDate);
+    });
+
+    function predictNextPeriod(lastPeriodDate) {
+      // Example: Add 28 days to the last period date for a regular 28-day cycle
+      const nextPeriodDate = new Date(lastPeriodDate.getTime() + 28 * 24 * 60 * 60 * 1000);
+      return nextPeriodDate;
+    }
+
+    function displayNextPeriodPrediction(nextPeriodDate) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = nextPeriodDate.toLocaleDateString('en-US', options);
+      document.getElementById('nextPeriodPrediction').innerHTML = `Your next period is expected on ${formattedDate}.`;
+    }
+
+    function checkDoctorConsultation(lastPeriodDate) {
+      // Example: Check if it's been more than 35 days since the last period (irregular cycle)
+      const currentDate = new Date();
+      const cycleDuration = Math.round((currentDate - lastPeriodDate) / (1000 * 60 * 60 * 24));
+      if (cycleDuration > 35) {
+        alert("Your menstrual cycle is irregular. Please consult a doctor.");
+      }
+    }
+  </script>
+</body>
+</html>

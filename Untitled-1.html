@@ -1,0 +1,499 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="app-version" content="${COMMIT_HASH}"><meta name="robots" content="noindex"><meta name="_csrf" content="Q9LbBCbq-e5vvGfWwDNnhQchRivdwujd7eTQ"><meta name="hostedSubdomain" content="webflow.io"><link rel="manifest" type="application/manifest+json" href="/manifest.json"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#3490eb"><link rel="stylesheet" type="text/css" href="https://d3e54v103j8qbb.cloudfront.net/gen/css/webflow-designer.cc0abac8f17f9add9f3e.css"><script type="text/javascript" id="perimeterx-script">(function () {
+    function getCookieValue(name) {
+      var cookies = '; ' + document.cookie;
+      //var parts = cookies.split(`; ${name}=`);
+      var parts = cookies.split('; ' + name + '=');
+      if (parts.length <= 1) {
+        return;
+      }
+      var val = parts.pop().split(';').shift();
+      try {
+        return val;
+      } catch (e) {
+      }
+    }
+    
+    // Custom parameters
+    window._pxParam1 = getCookieValue('wf_user');
+    var p = document.getElementsByTagName('script')[0],
+    s = document.createElement('script');
+    s.async = 1;
+    s.src = '/TG2vkiqj/init.js';
+    p.parentNode.insertBefore(s, p);
+  }());</script><title>Webflow - Riddhima's Superb Site</title><link rel="icon" href="https://d3e54v103j8qbb.cloudfront.net/static/favicon_designer.88fce7c7f8.png"><script>//- attributes == {apiKey: "", source: "", hostUrl: "", authenticated: true/false}
+  var source = 'designer';
+  var hostUrl = 'https://webflow.com';
+  var authenticated = Boolean();
+  
+  var forceFalse = false;
+  // When ipstack is not loaded window.wf_continentCode is undefined and
+  // segment consent manager doesn't require consent. We assume consent for
+  // authenticated users
+  switch (source) {
+    case 'dashboard':
+      // If in iframe we don't want consent banner to pop up so we don't load ipstack,
+      // but we also use parent window consent manager settings for analytics
+      if (!authenticated) {
+        initCallbacks();
+        loadIpStack();
+      }
+      break;
+    case 'designer-preview':
+      // When loading preview.webflow.com/... we don't know if a user is
+      // authenticated or not so we need to call this extra endpoint
+      initCallbacks();
+      isAuthenticated(function(authenticated) {
+        if (!authenticated) {
+          loadIpStack();
+        } else {
+          // Needed to resolve wf_isEU
+          forceFalse = true;
+        }
+      });
+      break;
+    // Default: do nothing
+    // Users in Designer are always authenticated so we don't need to detect
+    // EU continent because we assume consent
+  }
+  
+  function initCallbacks() {
+    // ipstack docs: https://ipstack.com/documentation
+    window.wf_onDetectContinent = function(ipstackResponseJson) {
+      window.wf_continentCode = ipstackResponseJson.continent_code; 
+      window.wf_userLocation = {
+        country_code: ipstackResponseJson.country_code,
+        city: ipstackResponseJson.city
+      }
+    };
+  
+    window.wf_isEU = function() {
+      // In order to be GDPR-compliant, we want to treat users from unidentified continent
+      // as if they were from EU and in result – show them cookie consent manager
+      // instead of assuming the consent was given:
+      var fallbackValue = true;
+      
+      if (forceFalse) {
+        return false;
+      }
+      if (typeof window.wf_continentCode === 'string') {
+        return window.wf_continentCode === 'EU';
+      }
+      if (typeof Promise === 'undefined') {
+        return fallbackValue;
+      }
+      
+      // There could be a race condition and wf_continentCode be undefined
+      return new Promise(function(resolve) {
+        var i = 0;
+        var interval = setInterval(function() {
+          // Resolve it if:
+          // - ipstack has loaded and window.wf_continentCode is defined
+          // - 5 seconds passed and wf_continentCode is still undefined
+          // - forceFalse is true (used in preview sites when user is authenticated)
+          if (forceFalse) {
+            clearInterval(interval);
+            return resolve(false);
+          }
+          if (i++ >= 50) {
+            clearInterval(interval);
+            return resolve(fallbackValue);
+          }
+          if (typeof window.wf_continentCode === 'string') {
+            clearInterval(interval);
+            return resolve(window.wf_continentCode === 'EU');
+          }
+        }, 100);
+      });
+    };
+  }
+  
+  function loadIpStack() {
+    var head = document.getElementsByTagName("head")[0];
+    var ipstackScript = document.createElement("script");
+    ipstackScript.src = "https://api.ipstack.com/check?access_key=53038fede8e664ed0b2e5274047e23a8&fields=continent_code,country_code,city&callback=wf_onDetectContinent";
+    head.appendChild(ipstackScript);
+  }
+  
+  function isAuthenticated(cb) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", hostUrl + '/api/user/readOnlyData');
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.withCredentials = true;
+    xmlhttp.onload = function() {
+      if (xmlhttp.status === 200) {
+        cb(true);
+      } else {
+        cb(false);
+      }
+    };
+    xmlhttp.send();
+  }</script><script type="text/javascript">!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(e){return function(){var t=Array.prototype.slice.call(arguments);t.unshift(e);analytics.push(t);return analytics}};for(var e=0;e<analytics.methods.length;e++){var key=analytics.methods[e];analytics[key]=analytics.factory(key)}analytics.load=function(key,e){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.src="https://analytics.webflow.com/analytics.js/v1/" + key + "/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n);analytics._loadOptions=e};analytics._writeKey="f28KeHZ0I4kQbVZw6U8fqkBHQ5PyOMs0";analytics._cdn="https://analytics.webflow.com";;analytics.SNIPPET_VERSION="4.15.3";
+  //- Purposefully doesn't include 'analytics.load(API_TOKEN)' here, as this is deferred to segment-consent-manager
+  analytics.page();
+  }}();</script><script type="text/javascript">Object.defineProperty(window, 'wfenvironment', {
+    value: Object.freeze({
+      APP_ENV: "production",
+      designerCanvasCss: "https://d3e54v103j8qbb.cloudfront.net/gen/css/designer-canvas.9d05f7c8a33778c45774.css",
+    }),
+    writable: false,
+    enumerable: false
+  });
+  </script></head><body class="wf-control"><div id="preloader"><div class="loader-wrapper"><svg width="1080" height="674" viewBox="0 0 1080 674" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo"><path fill-rule="evenodd" clip-rule="evenodd" d="M1080 0L735.386 673.684H411.695L555.916 394.481H549.445C430.464 548.934 252.942 650.61 -0.000366211 673.684V398.344C-0.000366211 398.344 161.813 388.787 256.938 288.776H-0.000366211V0.0053214H288.771V237.515L295.252 237.489L413.254 0.0053214H631.645V236.009L638.126 235.999L760.556 0H1080Z" fill="white"></path></svg><div class="overlay"></div><div class="shapes-overlay"></div><div class="bar"><div class="clipper"><div class="clipped-light"></div></div><div class="shapes-group"><svg width="100%" height="100%" viewBox="0 0 640 446" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" class="cast-blur"><g id="Artboard1" transform="matrix(0.687089,0,0,0.75508,-695.831,558.042)"><rect x="1012.72" y="-739.051" width="931.263" height="590.584" style="fill:none;"></rect><g id="cast-blur" serif:id="cast blur" transform="matrix(2.34977e-16,-3.49193,2.58578,1.44076e-16,-1540.19,4648.89)"><path style="fill:rgb(0,100,255);" d="M1458.34,1040.74L1491.73,1202.75C1485.21,1195.23 1467.63,1184.21 1458.34,1183.32C1451.92,1183.48 1434.02,1192.4 1425.08,1203.15L1458.34,1040.74Z"></path></g></g></svg><svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 640 446" xmlns="http://www.w3.org/2000/svg" class="shadow"><g transform="matrix(.687089 0 0 .75508 -695.831 558.042)"><path d="m1012.72-739.051h931.263v590.584h-931.263" fill="none"></path><path d="m1269.48 1088.74 182.69 221.74h-365.39" transform="matrix(0 -1.32436 1.45542 0 -53.1962 1237.49)"></path></g></svg><svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 640 446" xmlns="http://www.w3.org/2000/svg" class="bar-glow"><g transform="matrix(.687089 0 0 .75508 -695.831 558.042)"><path d="m1012.72-739.051h931.263v590.584h-931.263" fill="none"></path><path d="m1458.34 1040.74c16.09 52.59 24.86 105.12 22.72 157.58h-45.43c-.5-54.12 6.76-106.71 22.71-157.58" fill="#000eff" transform="matrix(0 -.202703 1.77038 0 -593.442 -148.149)"></path></g></svg><svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 640 446" xmlns="http://www.w3.org/2000/svg" class="mid-glow"><g transform="matrix(.687089 0 0 .75508 -695.831 558.042)"><path d="m1012.72-739.051h931.263v590.584h-931.263" fill="none"></path><path d="m1269.48 1088.74 182.69 221.74h-365.39" transform="matrix(0 -1.32436 1.45542 0 -53.1962 1237.49)"></path></g></svg><svg width="100%" height="100%" viewBox="0 0 640 446" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" class="top-glow-3"><g id="Artboard1" transform="matrix(0.687089,0,0,0.75508,-695.831,558.042)"><rect x="1012.72" y="-739.051" width="931.263" height="590.584" style="fill:none;"></rect><g id="top-glow-2" serif:id="top glow 2" transform="matrix(1.36402e-17,-0.202703,1.45542,8.10939e-17,-216.009,-148.149)"><path style="fill:url(#_Linear1);" d="M1458.34,1040.74C1474.43,1093.33 1483.2,1145.86 1481.06,1198.32L1435.63,1198.32C1435.13,1144.2 1442.39,1091.61 1458.34,1040.74Z"></path></g></g><defs><linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.12804e-14,151.347,-184.223,9.26731e-15,1460.62,1046.97)"><stop offset="0" style="stop-color:rgb(49,144,255);stop-opacity:0"></stop><stop offset="1" style="stop-color:rgb(0,255,255);stop-opacity:1"></stop></linearGradient></defs></svg><svg width="100%" height="100%" viewBox="0 0 640 446" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" class="top-glow-2"><g id="Artboard1" transform="matrix(0.687089,0,0,0.75508,-695.831,558.042)"><rect x="1012.72" y="-739.051" width="931.263" height="590.584" style="fill:none;"></rect><g id="top-glow-2" serif:id="top glow 2" transform="matrix(1.36402e-17,-0.202703,1.45542,8.10939e-17,-216.009,-148.149)"><path style="fill:url(#_Linear1);" d="M1458.34,1040.74C1474.43,1093.33 1483.2,1145.86 1481.06,1198.32L1435.63,1198.32C1435.13,1144.2 1442.39,1091.61 1458.34,1040.74Z"></path></g></g><defs><linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.12804e-14,151.347,-184.223,9.26731e-15,1460.62,1046.97)"><stop offset="0" style="stop-color:rgb(49,144,255);stop-opacity:0"></stop><stop offset="1" style="stop-color:rgb(0,255,255);stop-opacity:1"></stop></linearGradient></defs></svg><svg width="100%" height="100%" viewBox="0 0 640 446" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" class="top-glow-1"><g id="Artboard1" transform="matrix(0.687089,0,0,0.75508,-695.831,558.042)"><rect x="1012.72" y="-739.051" width="931.263" height="590.584" style="fill:none;"></rect><g id="top-glow-1" serif:id="top glow 1" transform="matrix(1.36402e-17,-0.202703,2.69976,1.50427e-16,-1707.14,-148.149)"><path style="fill:url(#_Linear1);" d="M1458.34,1040.74C1474.43,1093.33 1483.2,1145.86 1481.06,1198.32L1435.63,1198.32C1435.13,1144.2 1442.39,1091.61 1458.34,1040.74Z"></path></g></g><defs><linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.12804e-14,151.347,-184.223,9.26731e-15,1460.62,1046.97)"><stop offset="0" style="stop-color:rgb(49,144,255);stop-opacity:0"></stop><stop offset="1" style="stop-color:rgb(0,255,255);stop-opacity:1"></stop></linearGradient></defs></svg></div></div></div></div><script type="text/javascript">window.performance && typeof performance.mark === 'function' &&
+    performance.mark('start js:execute-preloader');
+  </script><script type="text/javascript">var Preloader=function(doc,s,PRELOADER){var wrapperDiv=doc[s](PRELOADER);function update(phase){const shapesGroup=wrapperDiv.getElementsByClassName("shapes-group")[0];if(!shapesGroup)return;const clippedLight=wrapperDiv.getElementsByClassName("clipped-light")[0];if(!clippedLight)return;shapesGroup.classList.add(`shapes-phase-${phase}`);clippedLight.classList.add(`clipped-light-${phase}`)}function destroy(){if(wrapperDiv){const transitionTime=600;wrapperDiv.style.transition=`opacity ${transitionTime}ms ease-out`;wrapperDiv.style.opacity="0";setTimeout((function(){const div=wrapperDiv;div.classList.add("hidden");setTimeout((function(){if(div.parentNode){div.parentNode.removeChild(div)}wrapperDiv=null}),transitionTime*5)}),transitionTime)}}return{update:update,destroy:destroy}}(document,"getElementById","preloader");</script><script type="text/javascript">window.performance && typeof performance.mark === 'function' &&
+    performance.mark('end js:execute-preloader');
+  </script><div id="workspace" style="height: 100%"></div><div id="debug-overlay"></div><iframe id="responsive-images-iframe" src="/site/empty.html"></iframe><div id="designer-app-react-mount"></div><div id="preload-assets"></div><div id="drag-ghost"></div><div id="wf-eyedropper-button"></div><script type="text/javascript">if (typeof Preloader !== 'undefined') Preloader.update(1);
+  </script><script type="text/javascript">window.performance && typeof performance.mark === 'function' &&
+    performance.mark('start js:execute-app');
+  </script><script type="text/plain" id="wf-initial-data">{&quot;persistentUIState&quot;:{&quot;embedEditorSettingsLineWrapping&quot;:false,&quot;permanentlyDismissedNotifications&quot;:[],&quot;permanentlyDismissedNotes&quot;:[&quot;DASHBOARD_MATCHMAKING_NEW_SITE_NOTE&quot;],&quot;appearanceSettingsSelectedOption&quot;:&quot;darkDefault&quot;,&quot;dockedPanelSettings&quot;:{&quot;navigatorShowing&quot;:false,&quot;navigatorDocked&quot;:true,&quot;navigatorWidth&quot;:172},&quot;logFluxActionsOption&quot;:&quot;disabled&quot;,&quot;logTelemetryOption&quot;:&quot;disabled&quot;,&quot;pageExpandedFolders&quot;:[],&quot;enabledProjectCardDashboardV1&quot;:false,&quot;enableWSCheckoutAnnualDiscount&quot;:true,&quot;purchasedSitePlan&quot;:false,&quot;hasCreatedFirstSite&quot;:false,&quot;hasInstalledFirstLibrary&quot;:false,&quot;numDesignerVisit&quot;:0,&quot;numSiteVisit&quot;:0,&quot;tutorials&quot;:[{&quot;activeTutorial&quot;:&quot;nux-flexbox-extended&quot;,&quot;stepsCompleted&quot;:[],&quot;currentStepId&quot;:&quot;layout-start-tutorial&quot;,&quot;resumedCount&quot;:0,&quot;status&quot;:&quot;active&quot;,&quot;sites&quot;:[&quot;66229c7de7667815a14270a7&quot;]}],&quot;hasDismissedMergeCellWarning&quot;:false,&quot;startDeleteCmsTutorialOnLoad&quot;:false},&quot;activeTime&quot;:1,&quot;userId&quot;:&quot;66229c76e8249ded916498d3&quot;,&quot;userMeta&quot;:{&quot;last project created&quot;:&quot;2024-04-19T16:39:29.634Z&quot;,&quot;onboarding questionnaire version&quot;:&quot;April-2023&quot;,&quot;siteBuild&quot;:&quot;business-site&quot;,&quot;buildingFor&quot;:null,&quot;buildingForList&quot;:[&quot;self&quot;],&quot;workplace&quot;:null,&quot;isStudent&quot;:&quot;yes&quot;,&quot;hireExpert&quot;:null,&quot;submissionDate&quot;:&quot;2024-04-19T16:32:14.838Z&quot;,&quot;last open designer&quot;:&quot;2024-04-19T16:33:14.765Z&quot;},&quot;experimentAssignments&quot;:[{&quot;experiment&quot;:&quot;growth_core_designer_changes_2022_01&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_add_blank_layout_2022_09&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_designer_painted_door_2022_09&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.15,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_nux_after_project_creation_2022_11&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_video_player_2022_10&quot;,&quot;variant&quot;:&quot;v1&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_blank_versus_template_checklist_2022_10&quot;,&quot;variant&quot;:&quot;v1&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_add_with_libraries_2022_11&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_add_with_libraries_2023_01&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_connect_businesses_with_experts_in_designer_2023_01&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_connect_businesses_with_experts_in_designer_v2_2023_01&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.25,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_designer_figma_plugin_notification_2023_03&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.2,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_figma_plugin_notification_2023_03&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;enterprise_private_staging_publish_modal_2023_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_figma_plugin_notification_sp_2023_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_stack_2023_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_internal_quick_stack_2023_05&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_stack_v2_2023_05&quot;,&quot;variant&quot;:&quot;v1&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_stack_ga_2023_06&quot;,&quot;variant&quot;:&quot;v1&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;mon_trial_loss_aversion_2023_06&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_wrong_element_added_2023_08&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.2,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_first_impressions_2023_08&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_wrong_element_added_v2_2023_08&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.2,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_wrong_element_added_v3_2023_08&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_email_verification_2023_09&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.05,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_add_quick_stack_2023_09&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_basic_plan_enabled_2023_10&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_ai_help_2023_09&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_quick_add_quick_stack_v2_2023_10&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.5,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_ai_help_2024_02&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_localization_designer_add_typography_2024_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_localization_designer_topbar_2024_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_localization_designer_publish_2024_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_localization_designer_settings_2024_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_localization_designer_topbar_publish_2024_04&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_align_tag_2023_06&quot;,&quot;variant&quot;:&quot;v1&quot;,&quot;inRollout&quot;:false,&quot;rollout&quot;:0.0005,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;activation_basic_plan_enabled_2023_12&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:true,&quot;rollout&quot;:1,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;growth_ai_help_2024_03&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:true,&quot;rollout&quot;:0.3,&quot;status&quot;:200},{&quot;experiment&quot;:&quot;mon_billing_3_integration_2023_august&quot;,&quot;variant&quot;:&quot;control&quot;,&quot;inRollout&quot;:true,&quot;rollout&quot;:1,&quot;status&quot;:200,&quot;meta&quot;:{&quot;workspaceId&quot;:&quot;66229c76e8249ded91649903&quot;}}],&quot;appSettings&quot;:{&quot;isPerimeterXEnabled&quot;:true},&quot;initialFeatureFlags&quot;:{&quot;d2&quot;:true},&quot;featureConfig&quot;:{&quot;config&quot;:{&quot;clientSdkKey&quot;:&quot;client-nJfFsZScKezfQDA01wjoxovvPhAK4FTSLslypZ2pHYL&quot;,&quot;tier&quot;:&quot;production&quot;},&quot;identity&quot;:{&quot;userID&quot;:&quot;66229c76e8249ded916498d3&quot;,&quot;userAgent&quot;:&quot;unknown&quot;,&quot;custom&quot;:{&quot;app&quot;:&quot;designer&quot;,&quot;path&quot;:&quot;/&quot;,&quot;pathWithParams&quot;:&quot;/&quot;,&quot;siteCreated&quot;:&quot;1713544768535&quot;,&quot;siteShortName&quot;:&quot;riddhimas-superb-site&quot;,&quot;userCreated&quot;:&quot;1713544310244&quot;,&quot;userVerified&quot;:&quot;true&quot;,&quot;workspaceCreated&quot;:&quot;1713544310492&quot;,&quot;workspaceSlug&quot;:&quot;riddhimas-workspace-907bcb&quot;},&quot;customIDs&quot;:{&quot;siteId&quot;:&quot;66229e4060e8952d1dcd7230&quot;,&quot;workspaceId&quot;:&quot;66229c76e8249ded91649903&quot;},&quot;privateAttributes&quot;:{&quot;email&quot;:&quot;riddhimaphalswal@gmail.com&quot;},&quot;statsigEnvironment&quot;:{&quot;tier&quot;:&quot;production&quot;}},&quot;values&quot;:{&quot;feature_gates&quot;:{&quot;8oMNOGWYYe/dsogfowL+vLrVdT2OWWyyHB1Y4XXFWGs=&quot;:{&quot;name&quot;:&quot;8oMNOGWYYe/dsogfowL+vLrVdT2OWWyyHB1Y4XXFWGs=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;p7M33hx2/QNUnwxc0CuYfz1Pt74M+mfrGVQxzk65gwY=&quot;:{&quot;name&quot;:&quot;p7M33hx2/QNUnwxc0CuYfz1Pt74M+mfrGVQxzk65gwY=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;5paUHoZzybCpIc4XkEII7R&quot;,&quot;secondary_exposures&quot;:[]},&quot;mdqrxKA5yNLUO1xy5DRK+BdrEEx0DaTbUqGALpHTFfo=&quot;:{&quot;name&quot;:&quot;mdqrxKA5yNLUO1xy5DRK+BdrEEx0DaTbUqGALpHTFfo=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;26abweVcuqlr8uIb2aackv&quot;,&quot;secondary_exposures&quot;:[]},&quot;5pIFK+PVeOj47PIVY1YpQZ0n1VhUv3AFhxF9FK3/5NU=&quot;:{&quot;name&quot;:&quot;5pIFK+PVeOj47PIVY1YpQZ0n1VhUv3AFhxF9FK3/5NU=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6OJTHBQc1p2d9F2Cu8oreT&quot;,&quot;secondary_exposures&quot;:[]},&quot;LOBx6XjXdHGh1Mc2TWG0lUBfYWbMOp15iStJG887/pg=&quot;:{&quot;name&quot;:&quot;LOBx6XjXdHGh1Mc2TWG0lUBfYWbMOp15iStJG887/pg=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:structure_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;qwBI7cEFi2p5uofmngMNq9hyeXBei5HjbZBPsE2jVNk=&quot;:{&quot;name&quot;:&quot;qwBI7cEFi2p5uofmngMNq9hyeXBei5HjbZBPsE2jVNk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:spring_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;},{&quot;gate&quot;:&quot;ff-ds-276-spring-modal&quot;,&quot;gateValue&quot;:&quot;true&quot;,&quot;ruleID&quot;:&quot;7hw77C7V2NLzul7hTwhq6S:100.00:10&quot;}]},&quot;kaIOlI6Nq9Q/ie+EQ0pIStIilIP0OEzSTA39Jp+4KjQ=&quot;:{&quot;name&quot;:&quot;kaIOlI6Nq9Q/ie+EQ0pIStIilIP0OEzSTA39Jp+4KjQ=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6maJdrkIkMO9tixmJTk0G0&quot;,&quot;secondary_exposures&quot;:[]},&quot;1Kas5SxzFq1TyEEK/rwk9T2BTRF97IopQx0dxEZEiV4=&quot;:{&quot;name&quot;:&quot;1Kas5SxzFq1TyEEK/rwk9T2BTRF97IopQx0dxEZEiV4=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;JXxUskpxyJf0HzDZZzk+rnqpDJoD/uHhmIBaeZ2rf2I=&quot;:{&quot;name&quot;:&quot;JXxUskpxyJf0HzDZZzk+rnqpDJoD/uHhmIBaeZ2rf2I=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;tGWEp1ekGCD5QuqN7IYlGfZ+o0Bp3gDLnODVnfQtzzk=&quot;:{&quot;name&quot;:&quot;tGWEp1ekGCD5QuqN7IYlGfZ+o0Bp3gDLnODVnfQtzzk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;rc7aof7rQWJw0zjfmyo+vyx6ckIXvkvcjRsSD+E3JC0=&quot;:{&quot;name&quot;:&quot;rc7aof7rQWJw0zjfmyo+vyx6ckIXvkvcjRsSD+E3JC0=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;691xj3ocFHxg10G7j0SgFT:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;dZwrFziiqNuYnGDLDpHI1YhPjKifwSg45KCaURl8D2g=&quot;:{&quot;name&quot;:&quot;dZwrFziiqNuYnGDLDpHI1YhPjKifwSg45KCaURl8D2g=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;S3UH97cX9/DCJeeuSb/1cxTJ7CCdGRdLv4pASFeUrlQ=&quot;:{&quot;name&quot;:&quot;S3UH97cX9/DCJeeuSb/1cxTJ7CCdGRdLv4pASFeUrlQ=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6T2E3PXK7ZgV0AI8Yb8CTg:5.00:1&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:webflow_employees&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;oEth0GQmlQEb4LYJYa0d+c3HKD3ULkpBbWmsOKI9iAY=&quot;:{&quot;name&quot;:&quot;oEth0GQmlQEb4LYJYa0d+c3HKD3ULkpBbWmsOKI9iAY=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;xopiPniokR0nK50Zusg9JVnovSEk5Ehp9FNP10Oe3yY=&quot;:{&quot;name&quot;:&quot;xopiPniokR0nK50Zusg9JVnovSEk5Ehp9FNP10Oe3yY=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;7MdplwWXczC2R4dqgyJgbH:50.00:11&quot;,&quot;secondary_exposures&quot;:[]},&quot;gtX0dj3u43dHLSN3L1/ocA2zuRIhSWSH7czMAshjILo=&quot;:{&quot;name&quot;:&quot;gtX0dj3u43dHLSN3L1/ocA2zuRIhSWSH7czMAshjILo=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;2Qyvm6YT9wtgRGNpsa4PFD:100.00:4&quot;,&quot;secondary_exposures&quot;:[]},&quot;/z5rny/vN8rnsI2gxYCgnqQOFiwY847T4QIeZ6w5I34=&quot;:{&quot;name&quot;:&quot;/z5rny/vN8rnsI2gxYCgnqQOFiwY847T4QIeZ6w5I34=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;72G1Fy8i0ruKbdhdWPRBZP:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;sVP46tBNXrVbRgo8gxjQJi56Ye1Tf58d/5IGrW+t554=&quot;:{&quot;name&quot;:&quot;sVP46tBNXrVbRgo8gxjQJi56Ye1Tf58d/5IGrW+t554=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;eYRhaR917Kl8W9yQ5U6MBqXj8vPkIthFhiNmuNeAN78=&quot;:{&quot;name&quot;:&quot;eYRhaR917Kl8W9yQ5U6MBqXj8vPkIthFhiNmuNeAN78=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:int_workspace_libraries&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;DZW4Lt9/4nTqMYcoG7AAN7TQCRwpJ94xFJ+gE1GO2AQ=&quot;:{&quot;name&quot;:&quot;DZW4Lt9/4nTqMYcoG7AAN7TQCRwpJ94xFJ+gE1GO2AQ=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;I6aCKEIKc6Arq7OqoqijPw7efTjUjYkQrD6nNhdEUwo=&quot;:{&quot;name&quot;:&quot;I6aCKEIKc6Arq7OqoqijPw7efTjUjYkQrD6nNhdEUwo=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;12KBV7ZGIPESGYEd9f1J6j&quot;,&quot;secondary_exposures&quot;:[]},&quot;3VTr+Ac3pZZPAIkCsxMLLyT4g863JxXKgu3+Ayfoq6U=&quot;:{&quot;name&quot;:&quot;3VTr+Ac3pZZPAIkCsxMLLyT4g863JxXKgu3+Ayfoq6U=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;6NQl5KMzdkyX4BQuLcNGUb:100.00:4&quot;,&quot;secondary_exposures&quot;:[]},&quot;4eIPknyFF46oh0mLjXLEN9nOuX2TKp2hUHUJY5aPSpQ=&quot;:{&quot;name&quot;:&quot;4eIPknyFF46oh0mLjXLEN9nOuX2TKp2hUHUJY5aPSpQ=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;7hw77C7V2NLzul7hTwhq6S:100.00:10&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:spring_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;znSGofNSewV4L1nPnkUNOmgEJsZN01R3WQN2oIXOng0=&quot;:{&quot;name&quot;:&quot;znSGofNSewV4L1nPnkUNOmgEJsZN01R3WQN2oIXOng0=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;3pdsiYgVcKttxCHUYipiFj:100.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;eKZ9sLSo6+sicIvD6P1KSh2FCMctkVM3veR39Usebi0=&quot;:{&quot;name&quot;:&quot;eKZ9sLSo6+sicIvD6P1KSh2FCMctkVM3veR39Usebi0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;Sn9PmHzqK5EWutYoUW7WM&quot;,&quot;secondary_exposures&quot;:[]},&quot;ReTHz5O++2bhIDWL5iofoqpgFh3DS7gFBY5lndMX0a4=&quot;:{&quot;name&quot;:&quot;ReTHz5O++2bhIDWL5iofoqpgFh3DS7gFBY5lndMX0a4=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;p97Dq+fIx/w3/EkGTzaK1w3GxAKb2UiB7DMgeXVqPaw=&quot;:{&quot;name&quot;:&quot;p97Dq+fIx/w3/EkGTzaK1w3GxAKb2UiB7DMgeXVqPaw=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;2fAtq6siUQJKXEYjpkbIDr:100.00:16&quot;,&quot;secondary_exposures&quot;:[]},&quot;eecmD3rxb35ZwVocxDFRqbIjnQdCCFmngV56ILYVHa4=&quot;:{&quot;name&quot;:&quot;eecmD3rxb35ZwVocxDFRqbIjnQdCCFmngV56ILYVHa4=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;1UE4Su3I4rlnLxjWIjK0H7&quot;,&quot;secondary_exposures&quot;:[]},&quot;W0wgK3N2DKRw7mHe/OXWveRF5zny0tvm+vG0KHiLp/Q=&quot;:{&quot;name&quot;:&quot;W0wgK3N2DKRw7mHe/OXWveRF5zny0tvm+vG0KHiLp/Q=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:applied_ai_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;RTjXBMHnjTqFdoDyXUO2AKPkqYypcAKcmM0zGDh4caY=&quot;:{&quot;name&quot;:&quot;RTjXBMHnjTqFdoDyXUO2AKPkqYypcAKcmM0zGDh4caY=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;z0Bcstj2RryBavzQoKM3ahOCQcI8zFyYwMLgeOJj6ho=&quot;:{&quot;name&quot;:&quot;z0Bcstj2RryBavzQoKM3ahOCQcI8zFyYwMLgeOJj6ho=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;38p24hiNcPdhhQn9FNatCa:100.00:3&quot;,&quot;secondary_exposures&quot;:[]},&quot;4ZJ7EGzGqv4xuN2dyPyGVzeXC3ZzxnWvJ6WajoEnM98=&quot;:{&quot;name&quot;:&quot;4ZJ7EGzGqv4xuN2dyPyGVzeXC3ZzxnWvJ6WajoEnM98=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;e+VmFrHp4Yr8GXYWjDQHdWz2PclHlzv9quqbIMU/Xu0=&quot;:{&quot;name&quot;:&quot;e+VmFrHp4Yr8GXYWjDQHdWz2PclHlzv9quqbIMU/Xu0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;pJfUbXSMy3I5/YgFlhkcdg6l873+JjkE05INAUxLmUI=&quot;:{&quot;name&quot;:&quot;pJfUbXSMy3I5/YgFlhkcdg6l873+JjkE05INAUxLmUI=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;1GRc7C3ubfuHAZdcrFTPID&quot;,&quot;secondary_exposures&quot;:[]},&quot;p2Vh8R1nnPDbUmB2laIvAo+ftmfycxaj1wj+1VbZyLg=&quot;:{&quot;name&quot;:&quot;p2Vh8R1nnPDbUmB2laIvAo+ftmfycxaj1wj+1VbZyLg=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;5db3Rj2yuMYqBFwmuxU9Yw:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;ca/pVHa3/6Sxei+4H7EgEWxytJZtjYaWd4gIcLS9BNk=&quot;:{&quot;name&quot;:&quot;ca/pVHa3/6Sxei+4H7EgEWxytJZtjYaWd4gIcLS9BNk=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;3AOavQFFZQPhBgYu4UUpkZ:100.00:3&quot;,&quot;secondary_exposures&quot;:[]},&quot;bNYcTJMABTjrejqaTAIi80LmrWFfpTsCp44eZk1OWP0=&quot;:{&quot;name&quot;:&quot;bNYcTJMABTjrejqaTAIi80LmrWFfpTsCp44eZk1OWP0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:spring_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;},{&quot;gate&quot;:&quot;ff-ds-276-spring-modal&quot;,&quot;gateValue&quot;:&quot;true&quot;,&quot;ruleID&quot;:&quot;7hw77C7V2NLzul7hTwhq6S:100.00:10&quot;}]},&quot;nNw0VXPd+WjgyPPmllFr76kDgg2uUI1zeOE4/HRUmJA=&quot;:{&quot;name&quot;:&quot;nNw0VXPd+WjgyPPmllFr76kDgg2uUI1zeOE4/HRUmJA=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;6UEmtkv6YIUv6xe3jeQQdo&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:cms_-_alpha&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;5FDeSfKIJLemkdT7BTuxj/qoLWYEBfG9UQBPghck3ZA=&quot;:{&quot;name&quot;:&quot;5FDeSfKIJLemkdT7BTuxj/qoLWYEBfG9UQBPghck3ZA=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;2mFWFBDczFBSS3n0wqYfge&quot;,&quot;secondary_exposures&quot;:[]},&quot;i5RceAnwNYDnFUmn6Nr7tYoU2zgb6WZMXFAm/Ks3EJI=&quot;:{&quot;name&quot;:&quot;i5RceAnwNYDnFUmn6Nr7tYoU2zgb6WZMXFAm/Ks3EJI=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;fqjlnE7z3/vZw0OHR2kV0utFuXmlHUaSBJ3gfhkXNsI=&quot;:{&quot;name&quot;:&quot;fqjlnE7z3/vZw0OHR2kV0utFuXmlHUaSBJ3gfhkXNsI=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;4Ro9IBBNkqu9rioneZ32Qn:100.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;ONGbaY8NwLZsAON1rFnvSZpSx/C2YgSvAaKP+Qs3sy0=&quot;:{&quot;name&quot;:&quot;ONGbaY8NwLZsAON1rFnvSZpSx/C2YgSvAaKP+Qs3sy0=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;4XwqI1y8iet2NIcDO2TzoN:100.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;KmttvwfoYQsBfGx+YR6WvNYQXoRwaQ+hKZS5+DHpXLk=&quot;:{&quot;name&quot;:&quot;KmttvwfoYQsBfGx+YR6WvNYQXoRwaQ+hKZS5+DHpXLk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6aWA9ZaF7ZgPePjBFJwljv:0.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;4zIwhZkCZ+GlQOns3JIYBz0/OVfdZ3Y1uk/5+7mf+2A=&quot;:{&quot;name&quot;:&quot;4zIwhZkCZ+GlQOns3JIYBz0/OVfdZ3Y1uk/5+7mf+2A=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;YTgvz2H2yS7kYnVdz+7EJIUOPBCJhECNTPAhmUOoe68=&quot;:{&quot;name&quot;:&quot;YTgvz2H2yS7kYnVdz+7EJIUOPBCJhECNTPAhmUOoe68=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6qQhRaDxbTEJjpU4n58483:0.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;NP6mAIrpTB9kRjtJnW3FmZTpNpH4UMQimwJqY9Sec+k=&quot;:{&quot;name&quot;:&quot;NP6mAIrpTB9kRjtJnW3FmZTpNpH4UMQimwJqY9Sec+k=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;eYmgBZ7+8Grb61FIjGTNd9D3G+r/jczTEkvC5rm19Tk=&quot;:{&quot;name&quot;:&quot;eYmgBZ7+8Grb61FIjGTNd9D3G+r/jczTEkvC5rm19Tk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6FYOdbsE7s06H1VFraZMFX:0.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;RmFwNgM9My2V9xdee02O3uVC23fCyHlzLnWr8skh/Wk=&quot;:{&quot;name&quot;:&quot;RmFwNgM9My2V9xdee02O3uVC23fCyHlzLnWr8skh/Wk=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;5l7SVqMFGtjJgcwuQwZmOn:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;1yPpEBxQzs5EQ8FAvcACSinRq2S2J2069sPRZVRmmxE=&quot;:{&quot;name&quot;:&quot;1yPpEBxQzs5EQ8FAvcACSinRq2S2J2069sPRZVRmmxE=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;1hZJGH6G2ILkfSYj80TPYm:100.00:8&quot;,&quot;secondary_exposures&quot;:[]},&quot;pJu6WGBlTFWiqPzNCkQSRb8W05i8Lzy2Nfh+m51MAZM=&quot;:{&quot;name&quot;:&quot;pJu6WGBlTFWiqPzNCkQSRb8W05i8Lzy2Nfh+m51MAZM=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;2kPXMpEwdSSGQMZdT9GpFY:100.00:6&quot;,&quot;secondary_exposures&quot;:[]},&quot;1PAePmG+u2MMJihdvOPE+f3q6uU4s1vcblpYTbo4KCw=&quot;:{&quot;name&quot;:&quot;1PAePmG+u2MMJihdvOPE+f3q6uU4s1vcblpYTbo4KCw=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;5kEoc78HJYc99LX6mBVhXm:100.00:3&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:webflow_employees&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;EmL/07sZTmi9xV+epHzdYP8GGRzf/PzE1igH51TIYGQ=&quot;:{&quot;name&quot;:&quot;EmL/07sZTmi9xV+epHzdYP8GGRzf/PzE1igH51TIYGQ=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;CY7M9UIqsstwHXkY2gh+1iwe+xn/L400EHoMCr5V2Kk=&quot;:{&quot;name&quot;:&quot;CY7M9UIqsstwHXkY2gh+1iwe+xn/L400EHoMCr5V2Kk=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;5XLIOT3TX44LNErmtvgNEI:100.00:3&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:spring_team&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;JSUE/tzFGqA8SW6UZelJxRWNmjDOVW6AacN+s8q2058=&quot;:{&quot;name&quot;:&quot;JSUE/tzFGqA8SW6UZelJxRWNmjDOVW6AacN+s8q2058=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;32BFRMcGqnmbQXA5Bu3NCU:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;eDXaquyPVYoFNZ+HLRFOqPbAk7N1nlRiJhbhe4g83Es=&quot;:{&quot;name&quot;:&quot;eDXaquyPVYoFNZ+HLRFOqPbAk7N1nlRiJhbhe4g83Es=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;zTjP0wu4jQu1N5tp1E0KqrsQoD7VvYN4Qrege5SFXd0=&quot;:{&quot;name&quot;:&quot;zTjP0wu4jQu1N5tp1E0KqrsQoD7VvYN4Qrege5SFXd0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;tOlureLazS6/pYwbqdKmud6Bvaf9nA4m71Uoyrhnjxo=&quot;:{&quot;name&quot;:&quot;tOlureLazS6/pYwbqdKmud6Bvaf9nA4m71Uoyrhnjxo=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;0z+EonM/Ze0RUt4FnVPK9NO8zbPrdKWPIV/2nsroWAM=&quot;:{&quot;name&quot;:&quot;0z+EonM/Ze0RUt4FnVPK9NO8zbPrdKWPIV/2nsroWAM=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;JseFDRfctUKg1rAF0E6mL1YOHzQe1gVou75Mw8zcVOY=&quot;:{&quot;name&quot;:&quot;JseFDRfctUKg1rAF0E6mL1YOHzQe1gVou75Mw8zcVOY=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;7yTcUPkOpVX8RblnMlglSW:0.00:4&quot;,&quot;secondary_exposures&quot;:[]},&quot;wV9d2LzLij/UwbGC8MXX+RHNBZ5d/rww134rq+krlJQ=&quot;:{&quot;name&quot;:&quot;wV9d2LzLij/UwbGC8MXX+RHNBZ5d/rww134rq+krlJQ=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;6KqmYBA0CTqtf5qM55WRei:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;bsLlc2kcOlK5RWQ59v0AEAUf4ihEq1EqzVL0STw1ipU=&quot;:{&quot;name&quot;:&quot;bsLlc2kcOlK5RWQ59v0AEAUf4ihEq1EqzVL0STw1ipU=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;XGglpWsF+VpgOjXfIqzwrxv0n1E+aPydxJbt23zu0UA=&quot;:{&quot;name&quot;:&quot;XGglpWsF+VpgOjXfIqzwrxv0n1E+aPydxJbt23zu0UA=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;7mwUXvmtxafCGGMzE6jSol:0.00:1&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:ace_cohort&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;},{&quot;gate&quot;:&quot;segment:webflow_employees&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;gok0DFmTbYmfgm71+6/UBa9YMdK9fta9tVCYCvw0mUk=&quot;:{&quot;name&quot;:&quot;gok0DFmTbYmfgm71+6/UBa9YMdK9fta9tVCYCvw0mUk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;6DrHnMVtw8sNwJ5LUmKPLX&quot;,&quot;secondary_exposures&quot;:[]},&quot;0ACb5hSoxo1svvHlhJqD4sUSDGJ97B1kBGWGGxycXu4=&quot;:{&quot;name&quot;:&quot;0ACb5hSoxo1svvHlhJqD4sUSDGJ97B1kBGWGGxycXu4=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;w2/bDgmUb6OwHuhtN+Wm89zclNO2xRBG8xtJr4UsBbM=&quot;:{&quot;name&quot;:&quot;w2/bDgmUb6OwHuhtN+Wm89zclNO2xRBG8xtJr4UsBbM=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;33a1CT6pcQxQNJcK6V9hr2&quot;,&quot;secondary_exposures&quot;:[]},&quot;7xZWAYfVqaEy7CXa1ckZo3xjvoaWoIOdhw+qc8M1IKQ=&quot;:{&quot;name&quot;:&quot;7xZWAYfVqaEy7CXa1ckZo3xjvoaWoIOdhw+qc8M1IKQ=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;NaOvW/FyxHGGW+okX5dXeUZcodQswSRaUy5pwYMQCY0=&quot;:{&quot;name&quot;:&quot;NaOvW/FyxHGGW+okX5dXeUZcodQswSRaUy5pwYMQCY0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;taTnYyyHDohIACH0XOt7f9rsbQDo8eDaAR5/12UVIeQ=&quot;:{&quot;name&quot;:&quot;taTnYyyHDohIACH0XOt7f9rsbQDo8eDaAR5/12UVIeQ=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;62l6FrG4x1A1uszltnpcAG&quot;,&quot;secondary_exposures&quot;:[]},&quot;tcmGcYpBS2ChBOHZ0EWBvqwozC4S2fVByvq+/Nu+8qk=&quot;:{&quot;name&quot;:&quot;tcmGcYpBS2ChBOHZ0EWBvqwozC4S2fVByvq+/Nu+8qk=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:webflow_employees&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;},{&quot;gate&quot;:&quot;segment:cst&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;CjOPUxQfd2e9T/jCfK5kLFZtS+YknIrp9TbZsxBJ3n4=&quot;:{&quot;name&quot;:&quot;CjOPUxQfd2e9T/jCfK5kLFZtS+YknIrp9TbZsxBJ3n4=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;5RvIFSPqVidVKcu6J4M7SS:100.00:2&quot;,&quot;secondary_exposures&quot;:[]},&quot;+j+2BnaQSkzkNe0dpNHl103pbsRtVlBy3Ivqpwb7bho=&quot;:{&quot;name&quot;:&quot;+j+2BnaQSkzkNe0dpNHl103pbsRtVlBy3Ivqpwb7bho=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;P7vOA+qkoiRS/9UWXIUHxm+CI0lSj7WY2ZBiK9KyND4=&quot;:{&quot;name&quot;:&quot;P7vOA+qkoiRS/9UWXIUHxm+CI0lSj7WY2ZBiK9KyND4=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;LtNTzuGC6a/O4opneIzFRwuxaT7A0jTPzl4xxFVOaJU=&quot;:{&quot;name&quot;:&quot;LtNTzuGC6a/O4opneIzFRwuxaT7A0jTPzl4xxFVOaJU=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;Qdld2j63j/MIDqhyo7Y3RiOeFhBqJglREH2O+FwXR9I=&quot;:{&quot;name&quot;:&quot;Qdld2j63j/MIDqhyo7Y3RiOeFhBqJglREH2O+FwXR9I=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;qriyvYyof2e0nw26zR6JThjy67bKClLhvHTizM7yDcg=&quot;:{&quot;name&quot;:&quot;qriyvYyof2e0nw26zR6JThjy67bKClLhvHTizM7yDcg=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;default&quot;,&quot;secondary_exposures&quot;:[]},&quot;OKA/wpW5U0/bGFF7Bsd9Jpz9vIcGmsLeCg4ac42B+uM=&quot;:{&quot;name&quot;:&quot;OKA/wpW5U0/bGFF7Bsd9Jpz9vIcGmsLeCg4ac42B+uM=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;VVyWlhit5WRlsUzPk0ABI&quot;,&quot;secondary_exposures&quot;:[]},&quot;EA6pIl34ynZu2fCXtDsf5N+8HjgmFW1iWFEJidJmjwE=&quot;:{&quot;name&quot;:&quot;EA6pIl34ynZu2fCXtDsf5N+8HjgmFW1iWFEJidJmjwE=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;JCIMc2jHTforX4kLxzXeocMmrYb+LnAgwZU0w3bCzQY=&quot;:{&quot;name&quot;:&quot;JCIMc2jHTforX4kLxzXeocMmrYb+LnAgwZU0w3bCzQY=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;xdTyVT3ZuBSNWCl2NPxJ8eZ0ifhUzatwezSwUElWFy0=&quot;:{&quot;name&quot;:&quot;xdTyVT3ZuBSNWCl2NPxJ8eZ0ifhUzatwezSwUElWFy0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;/zPeDB00QSmJg02UNPvvY6N+w7bL9XbOTmOZn0UHdA0=&quot;:{&quot;name&quot;:&quot;/zPeDB00QSmJg02UNPvvY6N+w7bL9XbOTmOZn0UHdA0=&quot;,&quot;value&quot;:false,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;p8RKstqTUsFv0yM8P1EiWUksDkzfBxAw5OAvX/lo29w=&quot;:{&quot;name&quot;:&quot;p8RKstqTUsFv0yM8P1EiWUksDkzfBxAw5OAvX/lo29w=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;6OcWkXZuFdfUXaKzXh2Nef:100.00:1&quot;,&quot;secondary_exposures&quot;:[]},&quot;9DmxyyZ8FEsc5DSKm/8DpcDu2e/GCLlCF0UJQCEBuSw=&quot;:{&quot;name&quot;:&quot;9DmxyyZ8FEsc5DSKm/8DpcDu2e/GCLlCF0UJQCEBuSw=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]},&quot;Pesmw2FSIduSR93sJEVAEAHyJZ4MQP9Pbn1gPgXxcXw=&quot;:{&quot;name&quot;:&quot;Pesmw2FSIduSR93sJEVAEAHyJZ4MQP9Pbn1gPgXxcXw=&quot;,&quot;value&quot;:true,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;secondary_exposures&quot;:[]}},&quot;dynamic_configs&quot;:{&quot;mMjt/im3qTbmtzqqztBpqn+Rgsc5U8Gc8X6ZDITjoDk=&quot;:{&quot;name&quot;:&quot;mMjt/im3qTbmtzqqztBpqn+Rgsc5U8Gc8X6ZDITjoDk=&quot;,&quot;value&quot;:{&quot;slotSerializationDifferRate&quot;:0},&quot;group&quot;:&quot;default&quot;,&quot;rule_id&quot;:&quot;default&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;Abq7j8lCUGCWx2iqashROjdv8R2L4sVg4pUuROgkp4E=&quot;:{&quot;name&quot;:&quot;Abq7j8lCUGCWx2iqashROjdv8R2L4sVg4pUuROgkp4E=&quot;,&quot;value&quot;:{&quot;threshold&quot;:-0.1,&quot;model&quot;:&quot;gpt-3.5-turbo&quot;},&quot;group&quot;:&quot;default&quot;,&quot;rule_id&quot;:&quot;default&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;oIkmI84/O3nodhAO/gAbs0zgY2IvPgpH6UlSycbHi/I=&quot;:{&quot;name&quot;:&quot;oIkmI84/O3nodhAO/gAbs0zgY2IvPgpH6UlSycbHi/I=&quot;,&quot;value&quot;:{},&quot;group&quot;:&quot;default&quot;,&quot;rule_id&quot;:&quot;default&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;1vaRoS0QlFL+TEUDugDt/1KXdWvhj03Qb9u2ruorsNc=&quot;:{&quot;name&quot;:&quot;1vaRoS0QlFL+TEUDugDt/1KXdWvhj03Qb9u2ruorsNc=&quot;,&quot;value&quot;:{&quot;MAX_NESTED_DYNLISTS_PER_PAGE&quot;:1,&quot;MAX_DYNLISTS_PER_PAGE&quot;:20,&quot;MAX_NESTED_COLLECTION_LIST_LIMIT&quot;:5,&quot;MAX_COLLECTION_LIST_LIMIT&quot;:100},&quot;group&quot;:&quot;default&quot;,&quot;rule_id&quot;:&quot;default&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;CHiQfJJNufnbbHjt7tcZuD9wK6Bl5FwbOUHnSl3avqA=&quot;:{&quot;name&quot;:&quot;CHiQfJJNufnbbHjt7tcZuD9wK6Bl5FwbOUHnSl3avqA=&quot;,&quot;value&quot;:{&quot;libraryMetadata&quot;:{&quot;dev-copilot&quot;:{&quot;versionedResourceId&quot;:&quot;65ef3169b23ced04231fc9cc&quot;}},&quot;maxConcurrent&quot;:50,&quot;librarySearchOptions&quot;:{&quot;librarySectionDenylist&quot;:[&quot;Hero 26 - Subheading and image above, large heading below&quot;,&quot;Pricing 29 - Header, toggle, three cards, pricing grid&quot;],&quot;numResults&quot;:5,&quot;minMatchScore&quot;:0.8}},&quot;group&quot;:&quot;default&quot;,&quot;rule_id&quot;:&quot;default&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;zRYikcIlbF3Un7C26+4VGO/t8jKwNjjuAdQWLlZECTQ=&quot;:{&quot;name&quot;:&quot;zRYikcIlbF3Un7C26+4VGO/t8jKwNjjuAdQWLlZECTQ=&quot;,&quot;value&quot;:{&quot;env&quot;:&quot;production&quot;},&quot;group&quot;:&quot;5UbDumatBcUWBMfWbj1FNy&quot;,&quot;rule_id&quot;:&quot;5UbDumatBcUWBMfWbj1FNy&quot;,&quot;is_device_based&quot;:true,&quot;secondary_exposures&quot;:[{&quot;gate&quot;:&quot;segment:webflow_employees&quot;,&quot;gateValue&quot;:&quot;false&quot;,&quot;ruleID&quot;:&quot;default&quot;}]},&quot;RMv0YJlLOBe7cY7HgZ3Jox34R0Wrk7jLv3DZyBETA7I=&quot;:{&quot;name&quot;:&quot;RMv0YJlLOBe7cY7HgZ3Jox34R0Wrk7jLv3DZyBETA7I=&quot;,&quot;value&quot;:{&quot;fullStoryConsent&quot;:[&quot;flagOne&quot;],&quot;keyboardShortcuts&quot;:{&quot;flagOne&quot;:&quot;* e m e r s o n *&quot;}},&quot;group&quot;:&quot;disabled&quot;,&quot;rule_id&quot;:&quot;disabled&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[]},&quot;CS4BRGaO4rUrYNAyOI44zTjp3t7P2OOu41QdwKmWO/g=&quot;:{&quot;name&quot;:&quot;CS4BRGaO4rUrYNAyOI44zTjp3t7P2OOu41QdwKmWO/g=&quot;,&quot;value&quot;:{},&quot;group&quot;:&quot;prestart&quot;,&quot;rule_id&quot;:&quot;prestart&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[],&quot;is_user_in_experiment&quot;:false,&quot;is_experiment_active&quot;:false},&quot;6qSamKWmkxX2fnUM9HsZmrP8aP7f2O195iTFPfRXJnU=&quot;:{&quot;name&quot;:&quot;6qSamKWmkxX2fnUM9HsZmrP8aP7f2O195iTFPfRXJnU=&quot;,&quot;value&quot;:{},&quot;group&quot;:&quot;prestart&quot;,&quot;rule_id&quot;:&quot;prestart&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[],&quot;is_user_in_experiment&quot;:false,&quot;is_experiment_active&quot;:false},&quot;ZC8pa382rux3/Ya5JYmbaiFDJJqVQfa/ZkKRoDwNIOg=&quot;:{&quot;name&quot;:&quot;ZC8pa382rux3/Ya5JYmbaiFDJJqVQfa/ZkKRoDwNIOg=&quot;,&quot;value&quot;:{},&quot;group&quot;:&quot;prestart&quot;,&quot;rule_id&quot;:&quot;prestart&quot;,&quot;is_device_based&quot;:false,&quot;secondary_exposures&quot;:[],&quot;is_user_in_experiment&quot;:false,&quot;is_experiment_active&quot;:false}},&quot;layer_configs&quot;:{},&quot;sdkParams&quot;:{},&quot;has_updates&quot;:true,&quot;generator&quot;:&quot;statsig-node-sdk&quot;,&quot;time&quot;:0,&quot;evaluated_keys&quot;:{&quot;userID&quot;:&quot;66229c76e8249ded916498d3&quot;,&quot;customIDs&quot;:{&quot;siteId&quot;:&quot;66229e4060e8952d1dcd7230&quot;,&quot;workspaceId&quot;:&quot;66229c76e8249ded91649903&quot;}},&quot;hash_used&quot;:&quot;sha256&quot;,&quot;user_hash&quot;:&quot;2595666536&quot;}},&quot;isInBeta&quot;:true,&quot;configTest&quot;:&quot;production&quot;,&quot;siteId&quot;:&quot;66229e4060e8952d1dcd7230&quot;}
+  </script><script type="text/javascript">function htmlDecode(input) {
+    var doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
+  }
+  var initialDataEl = document.getElementById('wf-initial-data');
+  var initialData = {};
+  try {
+    initialData = JSON.parse(htmlDecode(initialDataEl.innerHTML));
+  } catch (e) {
+    console.log("Failed to parse initial data");
+  }
+  window.webflowInitialData = initialData;
+  window.datadogRumConfig = {"applicationId":"f3c57749-9e82-4d88-becf-68d52740251a","clientToken":"pub169e3de286f8f5a3a10c221c89a167d3","sampleRate":50,"replaySampleRate":0,"env":"prod","version":"dev-817d0c11853691f1d8281c28ac3966af397c1c35","allowedTracingOrigins":["https://webflow.com","http://webflow.com","https://www.webflow.com"]};
+  window.fullstoryConfig = {"orgId":"2Z5NT","isEnabled":true};
+  window.knockPublicApiKey = "pk_Cuic0ZIRfRQswe-e9hoLcmN1vfOTJ7MJcJBO6nm6J10";
+  window.exploConfig = {};
+  </script><script type="text/javascript" src="https://d3e54v103j8qbb.cloudfront.net/gen/js/webflow-designer.1eaea4de501bedda49b3.js" crossorigin="anonymous"></script><script type="text/javascript">window.performance && typeof performance.mark === 'function' &&
+    performance.mark('end js:execute-app');
+  </script><script>window.consentManagerConfig = function(exports) {
+    var React = exports.React
+    var bannerContent = React.createElement(
+      "span",
+      null,
+      "We use cookies (and other similar technologies) to improve your experience on our site. By using this website you agree to our",
+      " ",
+      React.createElement(
+        "a",
+        { href: '/legal/cookie-policy', target: "_blank" },
+        "Cookie Policy"
+      ),
+      "."
+    );
+    var preferencesDialogTitle = 'Cookie Preferences'
+    var preferencesDialogContent = 'We use data collected by cookies and JavaScript libraries to improve the functionality of the Webflow Dashboard, deliver personalized advertisements, and increase the overall performance of our service.'
+    var cancelDialogTitle = 'Are you sure you want to cancel?'
+    var cancelDialogContent = React.createElement(
+      'span',
+      null,
+      'Your preferences have not been saved. By continuing to use our website, you՚re agreeing to our',
+      ' ',
+      React.createElement(
+        'a',
+        {href: '/legal/cookie-policy', target: '_blank'},
+        'Cookie Policy'
+      ),
+      '.'
+    )
+    var defaultDestinationBehavior = 'imply'
+  
+    return {
+      container: '#consent-container',
+      writeKey: 'f28KeHZ0I4kQbVZw6U8fqkBHQ5PyOMs0',
+      cdnHost: 'analytics.webflow.com',
+      shouldRequireConsent: async function () {
+        try {
+          const inEu = exports.inEU();
+          let isAuth;
+  
+          if(inEu) {
+            isAuth = await isAuthenticated();
+          }
+  
+          // if in EU and not authenticated, require consent
+          return inEu && !isAuth;
+        } catch (e) {
+          return true;
+        }
+      },
+      bannerContent: bannerContent,
+      preferencesDialogTitle: preferencesDialogTitle,
+      preferencesDialogContent: preferencesDialogContent,
+      cancelDialogTitle: cancelDialogTitle,
+      cancelDialogContent: cancelDialogContent,
+      defaultDestinationBehavior: defaultDestinationBehavior,
+      onError: function(err) { console.error('SegmentConsentManager', err); },
+      closeBehavior: function(categories) {
+        return categories; // This sets them to the default value
+      },
+    }
+  }
+  
+  var body = document.getElementsByTagName("body")[0];
+  var consentScript = document.createElement("script");
+  consentScript.setAttribute(
+    "src",
+    "https://unpkg.com/@segment/consent-manager@4.5.1/standalone/consent-manager.js"
+  );
+  consentScript.setAttribute(
+    "integrity",
+    "sha384-6m1+pfvSflZ20rCXvmOQ340ZQ4K4peogarq/HMfzcCXyB6ngUjpm3PuCGwvQy87Y"
+  );
+  consentScript.setAttribute("crossorigin", "anonymous");
+  consentScript.setAttribute("defer", "defer");
+  body.appendChild(consentScript);
+  </script><div id="consent-container"></div><script type="text/javascript">window._hostUrl = "https://webflow.com";
+  </script><script type="text/javascript">async function isAuthenticated() {
+      try {
+          let response = await fetch(`${window._hostUrl}/api/user/readOnlyData`, {
+              method: 'GET',
+              headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+              },
+              credentials: 'include'
+          });
+          return response.status === 200;
+      } catch (error) {
+          console.error('Error during authentication:', error);
+          return false;
+      }
+  }</script><script type="text/javascript">(function() {
+    var isLoggedIn = "true" === "true";
+  
+    ////////////////////////////////////////////////////////////////////////////////
+    // code shared between both logged in and logged out states
+  
+    function getFirstTouchCookie(firstTouchCookieKey) {
+      if (!firstTouchCookieKey) return;
+      return document.cookie.split(';').find(function(item) {
+        return item.trim().indexOf(firstTouchCookieKey + '=') === 0;
+      });
+    }
+  
+    function setFirstTouchCookie(firstTouchCookieKey, firstTouchParams) {
+      var expireDate = new Date();
+      var domain;
+  
+      try {
+        domain = new URL("https://webflow.com").hostname;
+      } catch (err) {
+        console.log(err);
+        domain = window.location.hostname.toString();
+      }
+  
+      expireDate.setTime(expireDate.getTime() + (365 * 24 * 60 * 60 * 1000));
+  
+      document.cookie = [
+        firstTouchCookieKey,
+        '=',
+        encodeURIComponent(JSON.stringify(firstTouchParams)),
+        ';secure',
+        ';domain=.',
+        domain,
+        ';path=/',
+        ';expires=',
+        expireDate.toUTCString(),
+      ].join('');
+    }
+  
+    function parseFirstTouchParams(firstTouchCookieKey, firstTouchCookie) {
+      try {
+        return JSON.parse(decodeURIComponent(firstTouchCookie).trim().substring(firstTouchCookieKey.length + 1, firstTouchCookie.length))
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  
+    // We apply a limit on a presignup breadcrumbs entry in order to not allow cookie to grow too big
+    // (above 4000 bytes, which was a max size of cookies allowed by our infrastructure
+    // when the issue was reported).
+    //
+    // A sophisticated approach could be to check length of a whole cookie and, if too big in bytes,
+    // decide what data to remove from the cookie. But we decided to take a simplified one:
+    // we know that "presignup_breadcrumbs" is so far the only first touch cookie's field which
+    // grows a lot over time (adding a URL to an array potentially on every page visit), therefore 
+    // we can focus on that field only. Next, we do not count real bytes in a serialized cookie,
+    // but string chars (they could differ for example for emojis, but we do not expect emojis in URLs).
+    // Moreover, we ignore bytes added between array entries in a serialized JSON (double quotes, commas,
+    // spaces). Instead, we limit URLs to arbitrarily chosen:
+    // - max 10 URLs
+    // - max 1000 characters (sum of those URLs)
+    //
+    function limitPresignupBreadcrumbs(breadcrumbs) {
+      var urlsLimit = 10;
+      var charsLimit = 1000;
+  
+      var limitedBreadcrumbs = [];
+  
+      var charsTotal = 0;
+      for (let i = breadcrumbs.length - 1; i >= 0; i--) {
+        if (limitedBreadcrumbs.length < urlsLimit) {
+          charsTotal += breadcrumbs[i].length;
+          if (charsTotal <= charsLimit) {
+            limitedBreadcrumbs.push(breadcrumbs[i]);
+          }
+        }
+      }
+      limitedBreadcrumbs.reverse();
+      return limitedBreadcrumbs;
+    }
+  
+    ////////////////////////////////////////////////////////////////////////////////
+    // code for a logged in user
+  
+    if (isLoggedIn) {
+      var a_uid = "66229c76e8249ded916498d3";
+      var a_pl = "free";
+      var a_cr = "Fri Apr 19 2024 16:31:50 GMT+0000 (Coordinated Universal Time)";
+      var a_school = "";
+  
+      // This is useful to quickly access user variables via window object
+      var _dashboard_vars = {
+        subscriptionPlan: a_pl,
+        created: a_cr,
+      };
+  
+      window.wm_userRole = _dashboard_vars;
+  
+      // Here we define user properties that are easier to define on the
+      // client side
+      var _user_meta = {
+        'last open dashboard': new Date()
+      };
+  
+      if (typeof dashboard != 'undefined' && dashboard.queryObj().school) {
+        // school discount
+        _user_meta['School Discount'] = a_school ? true : false;
+      }
+  
+      // Only call identify on dashboard paths
+      var pathname = window.location.pathname;
+      if (/^\/dashboard(\/.*)?$/.test(pathname) ||
+        /^\/websites(\/.*)?$/.test(pathname) ||
+        /^\/designers(\/.*)?$/.test(pathname) ||
+        /^\/website(\/.*)?$/.test(pathname) ||
+        /^\/team(\/.*)?$/.test(pathname)) {
+        analytics.identify(a_uid, _user_meta);
+  
+        // Identify user on Tatari for TV ads conversions
+        if (window.tatari && typeof window.tatari.identify === 'function') {
+          window.tatari.identify(a_uid);
+        }
+      }
+  
+      (function limitSizeOfPreviouslyCreatedFirstTouchCookie() {
+        var firstTouchCookieKey = window.SharedConfig && window.SharedConfig.FIRST_TOUCH_COOKIE;
+        if (!firstTouchCookieKey) return;
+  
+        var firstTouchCookie = getFirstTouchCookie(firstTouchCookieKey);
+        if (!firstTouchCookie) return;
+  
+        var firstTouchParams = parseFirstTouchParams(firstTouchCookieKey, firstTouchCookie);
+        if (!firstTouchParams) return;
+  
+        if (firstTouchParams.presignup_breadcrumbs) {
+          firstTouchParams.presignup_breadcrumbs = limitPresignupBreadcrumbs(firstTouchParams.presignup_breadcrumbs);
+          setFirstTouchCookie(firstTouchCookieKey, firstTouchParams);
+        }
+      })();
+  
+      return;
+    }
+  
+    ////////////////////////////////////////////////////////////////////////////////
+    // code for a logged out / anonymous user
+  
+    if (!isLoggedIn) {
+      function getQueryParam(param) {
+        var query = window.location.search.substring(1);
+        var params = query.split('&');
+        for (var i = 0; i < params.length; i++) {
+          var pair = params[i].split('=');
+          if (decodeURIComponent(pair[0]) === param) {
+            return decodeURIComponent(pair[1]);
+          }
+        }
+        return null;
+      }
+  
+      function getURLDomainName(url) {
+        var a = document.createElement('a');
+        a.href = url;
+        return a.hostname;
+      }
+  
+      function getBreadcrumb() {
+        var match = 'utm_';
+        var hasUtm = window.location.search.substr(1).split('&').some(function(query) {
+          var chunks = query.split('=');
+          var key = chunks[0];
+          return key.startsWith(match);
+        });
+  
+        return (hasUtm) ?
+          window.location.host +
+          window.location.pathname +
+          window.location.search +
+          window.location.hash :
+          '';
+      }
+  
+      function handleFirstTouchParams(firstTouchCookieKey, gatherFirstTouchParamsFn, updateBreadcrumbInFirstTouchParamsFn) {
+        if (!firstTouchCookieKey) return;
+  
+        var firstTouchCookie = getFirstTouchCookie(firstTouchCookieKey);
+        var breadcrumb = getBreadcrumb();
+  
+        if (!firstTouchCookie) {
+          var firstTouchParams = gatherFirstTouchParamsFn(breadcrumb);
+          setFirstTouchCookie(firstTouchCookieKey, firstTouchParams);
+        } else if (breadcrumb) {
+          var firstTouchParams = parseFirstTouchParams(firstTouchCookieKey, firstTouchCookie);
+          if (!firstTouchParams) return;
+          updateBreadcrumbInFirstTouchParamsFn(firstTouchParams, breadcrumb);
+          setFirstTouchCookie(firstTouchCookieKey, firstTouchParams);
+        }
+      }
+  
+      if (window.self !== window.top) {
+        // If this is loaded in an iframe, skip setting the first touch cookie.
+        // We load the dashboard sign up page in an iframe (within a modal) on marketing pages
+        // and the iframe has the incorrect first touch parameters. 
+        // Therefore, we'll let the marketing page itself set the cookie and skip setting it here.
+        return;
+      }
+  
+      handleFirstTouchParams(
+        window.SharedConfig && window.SharedConfig.FIRST_TOUCH_COOKIE,
+        function gatherFirstTouchParams(breadcrumb) {
+          var firstTouchParams = {
+            first_touch_date: new Date().toISOString(),
+            initial_utm_campaign: getQueryParam('utm_campaign'),
+            initial_utm_content: getQueryParam('utm_content'),
+            initial_utm_medium: getQueryParam('utm_medium'),
+            initial_utm_source: getQueryParam('utm_source'),
+            initial_utm_term: getQueryParam('utm_term'),
+            initial_gclid: getQueryParam('gclid'),
+            initial_page_url: document.location.href,
+          };
+          if (document.referrer) {
+            firstTouchParams['initial_referrer'] = document.referrer;
+            firstTouchParams['initial_referring_domain'] = getURLDomainName(document.referrer);
+          }
+          if (breadcrumb) {
+            firstTouchParams.presignup_breadcrumbs = limitPresignupBreadcrumbs([breadcrumb]);
+          }
+          return firstTouchParams;
+        },
+        function updateBreadcrumbInFirstTouchParams(firstTouchParams, breadcrumb) {
+          if (!firstTouchParams.presignup_breadcrumbs) {
+            firstTouchParams.presignup_breadcrumbs = [];
+          }
+          firstTouchParams.presignup_breadcrumbs.push(breadcrumb);
+          firstTouchParams.presignup_breadcrumbs = limitPresignupBreadcrumbs(firstTouchParams.presignup_breadcrumbs);
+        }
+      );
+  
+    }
+  
+    ////////////////////////////////////////////////////////////////////////////////
+  
+  })();</script><link href="//fonts.googleapis.com/css?family=Roboto:400,300,500|Inconsolata:400,700" rel="stylesheet" type="text/css"><link href="//fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100;0,200;1,100&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet" type="text/css"></body></html>
